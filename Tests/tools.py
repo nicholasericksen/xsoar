@@ -1,6 +1,13 @@
 import ast
 import demisto_client
 from demisto_sdk.commands.common.tools import print_error
+import logging
+import sys
+import coloredlogs
+import os
+from HTMLLogger import HTMLFileHandler
+
+ARTIFACTS_PATH = os.environ.get('CIRCLE_ARTIFACTS')
 
 
 def update_server_configuration(client, server_configuration, error_msg):
@@ -40,3 +47,27 @@ def update_server_configuration(client, server_configuration, error_msg):
         msg = f'{error_msg} {status_code}\n{message}'
         print_error(msg)
     return response_data, status_code
+
+
+def install_logging(log_file_name: str) -> None:
+    """
+    This method install the logging mechanism so that info level logs will be sent to the console and debug level logs
+    will be sent to the log_file_name only.
+    Args:
+        log_file_name: The name of the file in which the debug logs will be saved
+    """
+    formatter = coloredlogs.ColoredFormatter(fmt='[%(asctime)s] - [%(threadName)s] - [%(levelname)s] - %(message)s',
+                                             level_styles={
+                                                 'critical': {'bold': True, 'color': 'red'},
+                                                 'debug': {'color': 'cyan'},
+                                                 'error': {'color': 'red'},
+                                                 'info': {},
+                                                 'warning': {'color': 'yellow'}})
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(formatter)
+    fh = HTMLFileHandler(f'{ARTIFACTS_PATH}/logs/{log_file_name}')
+    fh.setFormatter(formatter)
+    ch.setLevel(logging.INFO)
+    fh.setLevel(logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG,
+                        handlers=[ch, fh])

@@ -9,23 +9,14 @@ import json
 import glob
 import random
 import argparse
-import coloredlogs
 import logging
+from Tests.tools import install_logging
 from distutils.version import LooseVersion
 from copy import deepcopy
 from typing import Dict, Tuple
 from Tests.Marketplace.marketplace_services import IGNORED_FILES
 import demisto_sdk.commands.common.tools as tools
 from demisto_sdk.commands.common.constants import *  # noqa: E402
-
-coloredlogs.install(level=logging.DEBUG,
-                    fmt='[%(asctime)s] - [%(threadName)s] - [%(levelname)s] - %(message)s',
-                    level_styles={
-                        'critical': {'bold': True, 'color': 'red'},
-                        'debug': {'color': 'cyan'},
-                        'error': {'color': 'red'},
-                        'info': {},
-                        'warning': {'color': 'yellow'}})
 
 
 class TestConf(object):
@@ -1338,6 +1329,7 @@ def create_test_file(is_nightly, skip_save=False, path_to_pack=''):
 
 
 if __name__ == "__main__":
+    install_logging('collect_tests_and_content_packs.log')
     logging.info("Starting creation of test filter file")
 
     parser = argparse.ArgumentParser(description='Utility CircleCI usage')
