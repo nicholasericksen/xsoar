@@ -8460,7 +8460,6 @@ def main():
         socks.set_default_proxy()  # clear proxy settings
         socket.socket = org_socket  # type: ignore
 
-
 # python2 uses __builtin__ python3 uses builtins
-if __name__ == "__builtin__" or __name__ == "builtins":
+if __name__ in ("__builtin__", "builtins", "__main__"):
     main()
