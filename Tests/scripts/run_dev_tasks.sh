@@ -16,7 +16,7 @@
 pylint_return=0
 if [ -z "${PYLINT_SKIP}" ]; then
     echo "======== Running pylint on files: ${PYLINT_FILES} ==========="
-    python -m pylint -E -e string -d duplicate-string-formatting-argument -f parseable --generated-members=requests.packages.urllib3,requests.codes.ok \
+    python2 -m pylint -E -e string -d duplicate-string-formatting-argument -f parseable --generated-members=requests.packages.urllib3,requests.codes.ok \
         ${PYLINT_FILES}
     pylint_return=$?
     echo "Pylint completed with status code: $pylint_return"
@@ -28,7 +28,7 @@ fi
 
 if [ -z "${PYTEST_SKIP}" -a -z "${PYTEST_FAIL_NO_TESTS}" ]; then
     echo "collecting tests..."
-    collect_res=$(python -m pytest --collect-only 2>&1)
+    collect_res=$(python2 -m pytest --collect-only 2>&1)
     case "$collect_res" in
         *"errors"*)
             echo "========== Errors while collecting tests. Will execute tests anyway... ========="
@@ -46,7 +46,7 @@ fi
 
 pytest_return=0
 if [ -z "${PYTEST_SKIP}" ]; then
-    python -m pytest -v -n="${CPU_NUM}"
+    python2 -m pytest -v -n="${CPU_NUM}"
     pytest_return=$?
     echo "Pytest completed with status code: $pytest_return"
 fi
