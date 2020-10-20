@@ -23,7 +23,7 @@ Once the dependencies are installed you can run the XSOAR CLI from the root dire
 
 You will then be presented with the XSOAR prompt where you can enter CLI commands
 
-Start by viewing the currently available Packs by running `packs`.
+Start by viewing the currently available Packs by running `packs` or type `help`.
 
 ```
 XSOAR:> packs
@@ -64,8 +64,6 @@ Enabling a pack allows for entering the parameters needed for authenticating to 
 XSOAR:> enable
 Enable a pack by entering its <Pack Name> listed by 'packs' command
 Which Pack should be enabled? Whois
-[Errno 2] No such file or directory: 'config.json'
-[{'display': 'Return Errors', 'name': 'with_error', 'required': False, 'type': 8}, {'display': 'Proxy URL. Supports socks4/socks5/http connect proxies (e.g. socks5h://host:1080)', 'name': 'proxy_url', 'required': False, 'type': 0}]
 Enter integration parameters: 
 
 No description available

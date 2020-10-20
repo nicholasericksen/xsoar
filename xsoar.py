@@ -123,7 +123,6 @@ class XSOARShell(Cmd):
             with open('config.json', 'r') as f:
                 CONFIG = json.loads(f.read())
         except Exception as e:
-            print(e)
             CONFIG = {}
             with open('config.json', 'w+') as f:
                 f.write(json.dumps(CONFIG))
@@ -155,7 +154,7 @@ class XSOARShell(Cmd):
                 return
                 #except yaml.YAMLError as exc:
                 #    print(exc)
-            print(yml["configuration"])
+            #print(yml["configuration"])
             params = {}
             print("Enter integration parameters: \n")
             for param in yml["configuration"]:
