@@ -1,2 +1,2 @@
 def params():
-    return {'url': 'https://cve.circl.lu/api/', 'proxy': '', 'insecure': ''}
+    return {'url': 'https://cve.circl.lu/api/'}

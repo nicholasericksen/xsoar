@@ -8,6 +8,8 @@ import subprocess
 import shutil
 from cmd import Cmd
 
+AVAILABLE_PACKS = ['Nmap','CVESearch','Whois', 'AbuseDB', 'Alexa', 'Confluence', 'Github', 'Gmail', 'HashiCorp-Vault', 'Jira', 'JoeSecurity', 'JsonWhoIs', 'Mattermost', 'MicrosoftTeams', "MongoDB", "OSQuery", "Pwned", "SMB", "Shodan", "Slack", "SplunkPy", "VirusTotal", "WhatIsMyBrowser", "ElasticSearch"]
+
 
 
 class XSOARShell(Cmd):
@@ -17,6 +19,71 @@ class XSOARShell(Cmd):
     def do_quit(self, args):
         print("Exiting...")
         raise SystemExit
+    def do_packs(self, args):
+        """
+        List the packs available and enabled
+        """
+        print("The following Packs are available.  The pack shorthand is used when invoking 'run' command")
+        print("\n")
+        print("<Pack Name> [<pack shorthand>] (<state>)") 
+        print("\n")
+        try:
+            with open('config.json', 'r') as f:
+                CONFIG = json.loads(f.read())
+        except Exception as e:
+            print(e)
+            CONFIG = {}
+        for pack in AVAILABLE_PACKS:
+            if pack.lower() in CONFIG:
+                print(f"{pack} [{pack.lower()}] (Enabled)")
+            else:
+                print(f"{pack} [{pack.lower()}]")
+    def do_docs(self, args):
+        """
+        Prints the docs page for a given command or Pack
+
+        Example:
+          docs cvesearch
+          docs cvesearch cve
+        """
+        args = args.split(" ")
+        pack = args[0]
+        if len(args) > 1:
+            command = args[1]
+
+        try:
+            with open('config.json', 'r') as f:
+                CONFIG = json.loads(f.read())
+        except Exception as e:
+            print(e)
+            return
+        
+        integration_config_path = CONFIG[pack]['config']
+
+        try:
+            with open(integration_config_path, "r") as stream:
+                yml = yaml.safe_load(stream)
+        except Exception as e:
+            print(e)
+            return
+        print("\n") 
+        print("##########")
+        print(f" {pack} ")
+        print("##########")
+        print(f"{yml['description']}")
+        print(f"Category: {yml['category']}\n")
+        print("Commands\n")
+        for item in yml['script']['commands']:
+            print(f"Name: {item['name']}")
+            if 'description' in item:
+                print(f"Description: {item['description']}")
+            print("Arguments: ")
+            for arg in item['arguments']:
+                print(f"\t{arg['name']} ", end="")
+                if 'description' in arg:
+                    print(f" - {arg['description']}")
+            print("\n")
+
     def do_enable(self, args):
         """
         Enable an integration
@@ -53,9 +120,15 @@ class XSOARShell(Cmd):
         print("Which Pack should be enabled? ")
         pack = input()
         config_key = pack.lower()
-
-        with open('config.json', 'r') as f:
-            CONFIG = json.loads(f.read())
+        try:
+            with open('config.json', 'r') as f:
+                CONFIG = json.loads(f.read())
+        except Exception as e:
+            print(e)
+            CONFIG = {}
+            with open('config.json', 'w+') as f:
+                f.write(json.dumps(CONFIG))
+        
         if not config_key in CONFIG:
             path = f"Packs/{pack}/Integrations/"
             
@@ -74,16 +147,32 @@ class XSOARShell(Cmd):
                 integration_path = f"{path}{pack}/"
                 integration_code_path = f"{path}{pack}/{pack}.py"
                 integration_config_path = f"{path}{pack}/{pack}.yml"
-            with open(integration_config_path, "r") as stream:
-                try:
+            try:
+                with open(integration_config_path, "r") as stream:
                     yml = yaml.safe_load(stream)
-                except yaml.YAMLError as exc:
-                    print(exc)
+            except Exception as e:
+                print(e)
+                print("\nYou may want to try to enable again with SAFE_MODE=true\n")
+                return
+                #except yaml.YAMLError as exc:
+                #    print(exc)
             print(yml["configuration"])
             params = {}
             print("Enter integration parameters: \n")
             for param in yml["configuration"]:
-                params[param['name']] = input(f"{param['name']}: ")
+                default = param.get('defaultvalue', None)
+                if default:
+                    params[param['name']] = default
+                if 'description' in param:
+                    description = param['description']
+                else:
+                    description = "No description available"
+                print(f"{description}\n")
+                print(f"Hint Enter for default value ({default})\n")
+                tmp_input = input(f"{param['name']}: ")
+                if tmp_input:
+                    params[param['name']] = tmp_input
+                      
             print(params)
             
             mock_param_code = "def params():\n"
@@ -162,7 +251,7 @@ class XSOARShell(Cmd):
         mock_args_code += f"    return {dArgs}\n"
 
         mock_results_code = "def results(results):\n"
-        mock_results_code += f"    print(str(results['Contents']))\n"
+        mock_results_code += f"    print(results['Contents'])\n"
 
         mock_results_code += "def error(results):\n"
         mock_results_code += f"    print(str(results))\n"
@@ -189,22 +278,10 @@ class XSOARShell(Cmd):
         if not container:
             container = client.containers.run(docker_image, tty=True, detach=True, name=CONFIG[pack]['image_name'], auto_remove=True, volumes=volumes)
         execute = subprocess.check_output(['docker', 'exec', CONFIG[pack]['image_name'], "/usr/local/bin/python", f"/tmp/{CONFIG[pack]['code'].split('/')[-1]}"], universal_newlines=True)
-        print(execute)
-        #raw = json.loads(execute.replace("'", "\""))
-        #print(execute.replace("\",", "\n").replace("{", "\n").replace("}", "").replace("\\n", "\n").replace("[", "\n").replace("]", "\n").replace(", \"", "\n").replace("\"","").replace("\',","\n"))
-        #for data in raw: 
-        #md = json_to_report(raw[0])
-        #print(md)
+        print(execute.replace("'", '"').replace("\",", "\n").replace("{", "\n").replace("}", "").replace("\\n", "\n").replace("[", "\n").replace("]", "\n").replace(", \"", "\n").replace("\"","").replace("\',","\n"))
 
-        """
-        exit_code, logs = container.exec_run("/usr/local/bin/python /tmp/Whois.py", stream=True)
-        for log in logs:
-            print(log)
-        container.stop()
-        """
 if __name__ == '__main__':
     shell = XSOARShell()
-
     description = "XSOAR CLI utility"
 
     shell.cmdloop(intro=description)

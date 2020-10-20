@@ -26,6 +26,7 @@ description: Alexa provides website ranking information that can be useful in de
 display: Alexa Rank Indicator
 name: Alexa Rank Indicator
 script:
+  dockerimage: "demisto/python:2.7.18.11782"
   commands:
   - arguments:
     - default: true
