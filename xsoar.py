@@ -31,7 +31,6 @@ class XSOARShell(Cmd):
             with open('config.json', 'r') as f:
                 CONFIG = json.loads(f.read())
         except Exception as e:
-            print(e)
             CONFIG = {}
         for pack in AVAILABLE_PACKS:
             if pack.lower() in CONFIG:
@@ -117,8 +116,8 @@ class XSOARShell(Cmd):
                 dArgs[k] = v
             if 'SAFE_MODE' in dArgs and dArgs['SAFE_MODE'] == 'true':
                 SAFE_MODE = True
-        print("Which Pack should be enabled? ")
-        pack = input()
+        print("Enable a pack by entering its <Pack Name> listed by 'packs' command")
+        pack = input("Which Pack should be enabled? ")
         config_key = pack.lower()
         try:
             with open('config.json', 'r') as f:
@@ -278,7 +277,7 @@ class XSOARShell(Cmd):
         if not container:
             container = client.containers.run(docker_image, tty=True, detach=True, name=CONFIG[pack]['image_name'], auto_remove=True, volumes=volumes)
         execute = subprocess.check_output(['docker', 'exec', CONFIG[pack]['image_name'], "/usr/local/bin/python", f"/tmp/{CONFIG[pack]['code'].split('/')[-1]}"], universal_newlines=True)
-        print(execute.replace("'", '"').replace("\",", "\n").replace("{", "\n").replace("}", "").replace("\\n", "\n").replace("[", "\n").replace("]", "\n").replace(", \"", "\n").replace("\"","").replace("\',","\n"))
+        print(execute.replace("'", '"').replace("u\"", '"').replace("\",", "\n").replace("{", "\n").replace("}", "").replace("\\n", "\n").replace("[", "\n").replace("]", "\n").replace(", \"", "\n").replace("\"","").replace("\',","\n"))
 
 if __name__ == '__main__':
     shell = XSOARShell()
