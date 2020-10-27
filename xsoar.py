@@ -132,10 +132,12 @@ class XSOARShell(Cmd):
             
             # SAFE_MODE if True assumes standard file naming conventions
             if SAFE_MODE:
-                print(os.listdir(path))
+                print(f"Current integrations in {pack}: ")
+                print("\n".join(os.listdir(path)))
                 integration = input("Name of the integration: ")
                 integration_path = path + integration
-                print(os.listdir(integration_path))
+                print(f"Files located in {integration_path}")
+                print("\n".join(os.listdir(integration_path)))
                 integration_code = input("Name of integration code file: ") 
                 integration_config = input("Name of integration config file: ")
 
