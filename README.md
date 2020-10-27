@@ -9,9 +9,23 @@ In its current state the demisto (now known as XSOAR) content can only be used b
 These automation scripts and integrations make utilizing a vast array of 3rd party and open source APIs from a single CLI possible.
 
 
+#### Prerequisites
+Install python 3.7 or 3.8. 
+Recomended to use `pyenv` or another Python versioning tool.
+
+Install `virtualenv` or someother Python virtual environment tool.
+
+For example
+
+`pip install virtualenv`
+
+Create a virtual env with `virtualenv venv`.
+Activate the virtualenv with `source ./venv/bin/activate`
+
 #### Requirements
-python3: requests, docker
-system: docker engine
+Install Python3 requirements with `pip install -r requirements.txt`
+
+Install docker engine according to  [here](https://docs.docker.com/get-docker/).
 
 API keys to 3rd party systems you already own or are open source.
 
