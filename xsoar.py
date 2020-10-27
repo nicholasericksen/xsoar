@@ -195,6 +195,7 @@ class XSOARShell(Cmd):
             # Copy CommonServerPython into integration directory
             shutil.copy('Packs/Base/Scripts/CommonServerPython/CommonServerPython.py', f"{integration_path}/")
             # Create blank CommonServerUserPython file in integration directory
+            open(f"{integration_path}/CommonServerUserPython.py", "a").close()
 
         else:
             print("Already configured")
