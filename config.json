@@ -1,1 +1,1 @@
-{"cvesearch": {"config": "Packs/CVESearch/Integrations/CVESearchV2/CVESearchV2.yml", "code": "Packs/CVESearch/Integrations/CVESearchV2/CVESearchV2.py", "path": "Packs/CVESearch/Integrations/CVESearchV2", "image_name": "cvesearch-xsoar"}, "whois": {"config": "Packs/Whois/Integrations/Whois/Whois.yml", "code": "Packs/Whois/Integrations/Whois/Whois.py", "path": "Packs/Whois/Integrations/Whois/", "image_name": "whois-xsoar"}}
+{}
