@@ -196,3 +196,11 @@ Pack configurations are stored in the config.json that is created in the root of
 You can remove this file at anytime to disable all intergations.
 As this file contains secrets and API keys it is strongly advised to manage its access closely.
 
+#### Known Limitations
+Currently only python modules are supported.
+The file path within the docker container for execution is hardcoded to be `/usr/bin/python`.
+
+#### Future Improvements
+[] Place generated demistomock, commonserverpython, commonserveruserpython into tmp directory not tracked by version control.
+
+
